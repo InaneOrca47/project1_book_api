@@ -64,12 +64,11 @@
 
     };
 
-    const sendGet = async (userForm) => {
-      const urlField = document.querySelector('#urlField');
+    const sendGet = async (form) => {
       const methodSelect = document.querySelector('#methodSelect');
 
       // send get request
-      const response = await fetch(urlField.value, {
+      const response = await fetch(form.action, {
         method: methodSelect.value,
         headers: {
           'Accept': 'application/json'
@@ -97,6 +96,43 @@
 
       // nameForm.addEventListener('submit', addUser);
       // userForm.addEventListener('submit', getUsers);
+
+      // Get forms
+      const bookForm = document.querySelector('#getBook');
+      const authorForm = document.querySelector('#getAuthor');
+      const languageForm = document.querySelector('#getLanguage');
+      const yearForm = document.querySelector('#getYear');
+
+      // write their functions
+      const getBooks = (e) => {
+        e.preventDefault();
+        sendGet(bookForm);
+        return false;
+      }
+
+      const getAuthor = (e) => {
+        e.preventDefault();
+        sendGet(authorForm);
+        return false;
+      }
+
+      const getLanguage = (e) => {
+        e.preventDefault();
+        sendGet(languageForm);
+        return false;
+      }
+
+      const getYear = (e) => {
+        e.preventDefault();
+        sendGet(yearForm);
+        return false;
+      }
+
+      // hook up events
+      bookForm.addEventListener('submit', getBooks);
+      authorForm.addEventListener('submit', getAuthor);
+      languageForm.addEventListener('submit', getLanguage);
+      yearForm.addEventListener('submit', getYear);
     };
 
     window.onload = init;
@@ -110,24 +146,59 @@
 
     <form id="getBook" action="/getBook" method="GET">
       <label for="title">Title: </label>
-      <input id="titleField" type="text" name="title" /> <br>
+      <input id="titleField" type="text" name="title" />
       <label for="author">Author: </label>
-      <input id="authorGet" type="text" name="author" /> <br>
-      <label for="language">Author: </label>
-      <input id="languageGet" type="text" name="language" /> <br>
+      <input id="authorGet" type="text" name="author" />
+      <label for="language">Language: </label>
+      <input id="languageGet" type="text" name="language" />
+      <label for="year">Language: </label>
+      <input id="yearGet" type="num" name="year" min=0 max=2026 />
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <input type="submit" value="Get User" />
-    </form>
+      <input type="submit" value="Get Book" />
+    </form> <br>
+
+    <form id="getAuthor" action="/getAuthor" method="GET">
+      <label for="author">Author: </label>
+      <input id="authorGet" type="text" name="author" />
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Get Author" />
+    </form> <br>
+
+    <form id="getLanguage" action="/getLanguage" method="GET">
+      <label for="language">Language: </label>
+      <input id="languageGet" type="text" name="language" />
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Get Language" />
+    </form> <br>
+
+    <form id="getYear" action="/getYear" method="GET">
+      <label for="year">Language: </label>
+      <input id="yearGet" type="num" name="year" min=0 max=2026 />
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Get Language" />
+    </form> <br>
+
     <form id="addBookForm" action="/addBook" method="POST">
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
       <label for="author">Author: </label>
       <input id="authorPost" type="text" name="author" />
-      <label for="language">Author: </label>
+      <label for="language">Language: </label>
       <input id="languagePost" type="text" name="language" />
+      <label for="year">Year: </label>
+      <input id="yearPost" type="num" name="year" min=0 max=2026 />
       <input type="submit" value="Add Book" />
     </form>
   </section>

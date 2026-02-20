@@ -5,51 +5,56 @@ const htmlHandler = require('./htmlResponses.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const parseBody = (request, response, handler) => {
-    const body = [];
+  const body = [];
 
-    request.on('error', (err) => {
-        console.log(err);
-        request.statusCode = 400;
-        response.end();
-    });
+  request.on('error', (err) => {
+    console.log(err);
+    request.statusCode = 400;
+    response.end();
+  });
 
-    request.on('data', (chunk) => {
-        body.push(chunk);
-    });
+  request.on('data', (chunk) => {
+    body.push(chunk);
+  });
 
-    request.on('end', () => {
-        const bodyString = Buffer.concat(body).toString();
-        
-        request.body = JSON.parse(bodyString);
+  request.on('end', () => {
+    const bodyString = Buffer.concat(body).toString();
 
-        if(!request.body) {
-            response.status = 400;
-            response.end();
-            return;
-        }
+    request.body = JSON.parse(bodyString);
 
-        handler(request, response);
-    });
+    if (!request.body) {
+      response.status = 400;
+      response.end();
+      return;
+    }
+
+    handler(request, response);
+  });
 }
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
-    parseBody(request, response, jsonHandler.addUser);
+  if (parsedUrl.pathname === '/addBook') {
+    parseBody(request, response, jsonHandler.addBook);
   }
 };
 
 const handleGet = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/style.css') {
-    htmlHandler.getCss(request, response);
-  } else if(parsedUrl.pathname === '/') {
-    htmlHandler.getIndex(request, response);
-  }
-  else if (parsedUrl.pathname === '/getUsers') {
-    jsonHandler.getUsers(request, response);
-  } else if (parsedUrl.pathname === '/notReal') {
-    jsonHandler.notReal(request, response);
-  } else {
-    jsonHandler.notReal(request, response);
+  switch (parsedUrl.pathname) {
+    case '/style.css':
+      htmlHandler.getCss(request, response);
+      break;
+    case '/':
+      htmlHandler.getIndex(request, response);
+      break;
+    case '/getBook':
+      jsonHandler.getBooks(request, response);
+      break;
+    case 'getAuthor':
+      break;
+    case 'getLanguage':
+      break;
+    default:
+      break;
   }
 };
 

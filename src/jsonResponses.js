@@ -1,4 +1,5 @@
 const books = require('../data/books.json');
+const query = require('querystring');
 
 const constructJSON = (content) => {
     return JSON.stringify(content);
@@ -17,12 +18,44 @@ const respondJSON = (request, response, status, content = "") => {
     response.end();
 };
 
+const searchBooks = ({ title, author, language, year }) => {
+
+    let responseJSON = {};
+    for (const i of books) {
+        if (books[i].title === title && books[i].author === author && books[i].language === language && books[i].year === year) {
+            responseJSON += books[i];
+        }
+    }
+
+    return responseJSON;
+}
+
 const getBooks = (request, response) => {
-    const responseJSON = users;
+    const queryParams = query.parse(request.query);
+
+    if (queryParams) {
+        const responseJSON = {
+            message: "Missing the necessary query parameters, all fields are required",
+            id: "missingQueryParams"
+        }
+        const content = constructJSON(responseJSON);
+
+        return respondJSON(request, response, 400, content);
+    }
+
+    const responseJSON = searchBooks(
+        {
+            title: queryParams.title,
+            author: queryParams.author,
+            language: queryParams.language,
+            year: queryParams.year
+        });
+
+    // if()
 
     const content = constructJSON(responseJSON);
 
-    respondJSON(request, response, 200, content);
+    return respondJSON(request, response, 200, content);
 };
 
 const addBook = (request, response) => {
@@ -31,10 +64,10 @@ const addBook = (request, response) => {
     }
 
     // check all the fields exist
-    const { title, author, language } = request.body;
+    const { title, author, language, year } = request.body;
 
     // return badRequest if it does
-    if (!title || !author || !language) {
+    if (!title || !author || !language || !year) {
         responseJson.id = 'addBookMissingParams';
         const content = constructJSON(responseJson);
         return respondJSON(request, response, 400, content);
@@ -42,7 +75,7 @@ const addBook = (request, response) => {
 
     // check if the book already exists/ return conflict if it does
     for (const i of books) {
-        if (books[i].title === title && books[i].author === author && books[i].language === language) {
+        if (books[i].title === title && books[i].author === author && books[i].language === language && books[i].year === year) {
             responseJson.message = 'This book already exists in the data set';
             responseJson.id = 'resourceAlreadyExists';
             const content = constructJSON(responseJson);
@@ -63,6 +96,7 @@ const addBook = (request, response) => {
         "title": title,
         "author": author,
         "language": language,
+        "year": year,
     }
 
     if (responseCode === 201) {
