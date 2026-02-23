@@ -1,4 +1,5 @@
 const http = require('http');
+const query = require('querystring');
 const jsonHandler = require('./jsonResponses.js');
 const htmlHandler = require('./htmlResponses.js');
 
@@ -20,7 +21,13 @@ const parseBody = (request, response, handler) => {
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
 
-    request.body = JSON.parse(bodyString);
+    if (request.headers['Content-Type'] === 'application/json') {
+      request.body = JSON.parse(bodyString);
+    }
+    else if (request.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+      request.body = query.parse(bodyString);
+    }
+
 
     if (!request.body) {
       response.status = 400;

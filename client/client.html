@@ -30,7 +30,7 @@
           break;
       }
 
-      if (method !== 'head') {
+      if (method === 'get') {
         const obj = await response.json();
         if (obj.message) {
           content.innerHTML += `<p>Message: ${obj.message}</p>`;
@@ -38,20 +38,27 @@
           content.innerHTML += `<p>${JSON.stringify(obj)}}</p>`;
         }
       }
+
+      if (method === 'post') {
+        //Magic words
+
+      }
     };
 
-    const sendPost = async (nameForm) => {
-      const nameAction = nameForm.getAttribute('action');//addUser
-      const nameMethod = nameForm.getAttribute('method');//POST
+    const sendPost = async (bookForm) => {
+      const bookAction = bookForm.getAttribute('action');//addUser
+      const bookMethod = bookForm.getAttribute('method');//POST
 
-      const name = nameForm.querySelector('#nameField').value;
-      const age = nameForm.querySelector('#ageField').value;
+      const title = bookForm.querySelector('#titlePost').value;
+      const author = bookForm.querySelector('#authorPost').value;
+      const language = bookForm.querySelector('#languagePost').value;
+      const year = bookForm.querySelector('#yearPost').value;
 
-      const formData = JSON.stringify({ name, age });
+      const formData = JSON.stringify({ title, author, language, year });
+      console.log(formData);
 
-
-      const response = await fetch(nameAction, {
-        method: nameMethod,
+      const response = await fetch(bookAction, {
+        method: bookMethod,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': formData.length,
@@ -61,14 +68,26 @@
       });
 
       handleResponse(response, 'post');
-
     };
 
     const sendGet = async (form) => {
       const methodSelect = document.querySelector('#methodSelect');
+      let formData;
+
+      switch (form.id) {
+        case 'getBook':
+          const title = form.querySelector('#titleField').value;
+          const author = form.querySelector('#authorGet').value;
+          const language = form.querySelector('#languageGet').value;
+          const year = form.querySelector('#yearGet').value;
+
+          formData = `title=${title}&author=${author}&language=${language}&year=${year}`;
+          break;
+
+      }
 
       // send get request
-      const response = await fetch(form.action, {
+      const response = await fetch(`${form.action}?${formData}`, {
         method: methodSelect.value,
         headers: {
           'Accept': 'application/json'
@@ -79,29 +98,12 @@
     }
 
     const init = () => {
-      // const nameForm = document.querySelector('#nameForm');
-      // const userForm = document.querySelector('#userForm');
-
-      // const addUser = (e) => {
-      //   e.preventDefault();
-      //   sendPost(nameForm);
-      //   return false;
-      // }
-
-      // const getUsers = (e) => {
-      //   e.preventDefault();
-      //   sendGet(userForm);
-      //   return false;
-      // }
-
-      // nameForm.addEventListener('submit', addUser);
-      // userForm.addEventListener('submit', getUsers);
-
       // Get forms
       const bookForm = document.querySelector('#getBook');
       const authorForm = document.querySelector('#getAuthor');
       const languageForm = document.querySelector('#getLanguage');
       const yearForm = document.querySelector('#getYear');
+      const addBookForm = document.querySelector('#addBookForm');
 
       // write their functions
       const getBooks = (e) => {
@@ -128,11 +130,18 @@
         return false;
       }
 
+      const addBook = (e) => {
+        e.preventDefault();
+        sendPost(addBookForm);
+        return false;
+      }
+
       // hook up events
       bookForm.addEventListener('submit', getBooks);
       authorForm.addEventListener('submit', getAuthor);
       languageForm.addEventListener('submit', getLanguage);
       yearForm.addEventListener('submit', getYear);
+      addBookForm.addEventListener('submit', addBook);
     };
 
     window.onload = init;
@@ -151,7 +160,7 @@
       <input id="authorGet" type="text" name="author" />
       <label for="language">Language: </label>
       <input id="languageGet" type="text" name="language" />
-      <label for="year">Language: </label>
+      <label for="year">Year: </label>
       <input id="yearGet" type="num" name="year" min=0 max=2026 />
       <select id="methodSelect">
         <option value="get">GET</option>
@@ -191,8 +200,8 @@
     </form> <br>
 
     <form id="addBookForm" action="/addBook" method="POST">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
+      <label for="Title">Title: </label>
+      <input id="titlePost" type="text" name="title" />
       <label for="author">Author: </label>
       <input id="authorPost" type="text" name="author" />
       <label for="language">Language: </label>

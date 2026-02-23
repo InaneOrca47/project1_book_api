@@ -18,6 +18,19 @@ const respondJSON = (request, response, status, content = "") => {
     response.end();
 };
 
+const responsURLEncoded = (request, response, status, content = "") => {
+    response.writeHead(status, {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(content, 'utf8'),
+    });
+
+    if (request.method !== 'HEAD' || status !== 204) {
+        response.write(content);
+    }
+
+    response.end();
+};
+
 const searchBooks = ({ title, author, language, year }) => {
 
     let responseJSON = {};
@@ -31,9 +44,11 @@ const searchBooks = ({ title, author, language, year }) => {
 }
 
 const getBooks = (request, response) => {
-    const queryParams = query.parse(request.query);
+    const queryParams = query.parse(request.query, null, null);
 
-    if (queryParams) {
+    console.log(queryParams);
+
+    if (!queryParams.title || !queryParams.author || !queryParams.language || !queryParams.year) {
         const responseJSON = {
             message: "Missing the necessary query parameters, all fields are required",
             id: "missingQueryParams"
@@ -45,10 +60,10 @@ const getBooks = (request, response) => {
 
     const responseJSON = searchBooks(
         {
-            title: queryParams.title,
-            author: queryParams.author,
-            language: queryParams.language,
-            year: queryParams.year
+            title: queryParams['title'],
+            author: queryParams['author'],
+            language: queryParams['language'],
+            year: queryParams['year']
         });
 
     // if()
@@ -84,20 +99,16 @@ const addBook = (request, response) => {
     }
 
     let responseCode = 201;
-    // if (!books[title]) {
-    //     users[title] = {
-    //         title: title,
-    //     };
-    // }
+    const index = books.length;
 
-    // users[title].author = author;
-    // users[title].language = language;
-    books[books.length] = {
+    books[index] = {
         "title": title,
         "author": author,
         "language": language,
         "year": year,
     }
+
+    console.log(books[index]);
 
     if (responseCode === 201) {
         responseJson.message = 'Created Successfully';
@@ -105,7 +116,7 @@ const addBook = (request, response) => {
         return respondJSON(request, response, responseCode, content)
     }
 
-    return respondJSON(request, response, responseCode);
+    return respondJSON(request, response, responseCode, books[index]);
 };
 
 
