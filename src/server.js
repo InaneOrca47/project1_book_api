@@ -21,10 +21,10 @@ const parseBody = (request, response, handler) => {
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
 
-    if (request.headers['Content-Type'] === 'application/json') {
+    if (request.headers['content-type'] === 'application/json') {
       request.body = JSON.parse(bodyString);
     }
-    else if (request.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    else if (request.headers['content-type'] === 'application/x-www-form-urlencoded') {
       request.body = query.parse(bodyString);
     }
 
