@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Our simple HTTP server</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <script>
+        const init = () => {
+            const coll = document.getElementsByClassName("collapsible");
+            let i;
+
+            for (i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    let content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+            }
+        }
+        window.onload = init;
+
+    </script>
+</head>
+
+<body>
+    <section id="top">
+        <h1>Documentation:</h1>
+        <a href='/'>Back to API Client</a>
+        <section id="content">
+            <h2>Get Books</h2>
+            <button type="button" class="collapsible">Get Books Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getBooks</p>
+                <p><b>Supported Methods:</b> GET and HEAD</p>
+                <h4>Query Parameters:</h4>
+                <p>Title: The title of the book. <b>Required</b></p>
+                <p>Author: The author of the book. <b>Required</b></p>
+                <p>Language: The language the book is written in. <b>Required</b></p>
+                <p>Year: The year the book was published. <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON Object containing a response message and an array with a single JSON object containing the
+                    book's data</p>
+                <h4>Example:</h4>
+                <p>URL: /getBooks?title=Things%20Fall%20Apart&author=Chinua%20Achebe&language=English&year=1958</p>
+                <p>Returns:
+                    {<br>
+                    message: "Book Found",<br>
+                    books: [<br>
+                    {<br>
+                    "author": "Chinua Achebe",<br>
+                    "country": "Nigeria",<br>
+                    "language": "English",<br>
+                    "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",<br>
+                    "pages": 209,<br>
+                    "title": "Things Fall Apart",<br>
+                    "year": 1958,<br>
+                    "genres": [<br>
+                    "Historical Fiction",<br>
+                    "Postcolonial Literature"<br>
+                    ]<br>
+                    }<br>
+                    ]<br>
+                    }</p>
+            </section>
+            <h2>Get Author</h2>
+            <button type="button" class="collapsible">Get Author Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getAuthor</p>
+                <p><b>Supported Methods:</b> GET and HEAD</p>
+                <h4>Query Parameters:</h4>
+                <p>Author: The author of the books. <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON object containing a response message and an array
+                    of JSON objects containing data for all the books with the same author.</p>
+                <h4>Example:</h4>
+                <p>URL: /getAuthor?author=Hans%20Christian%20Andersen</p>
+                <p>Returns:
+                    {<br>
+                    "message": "Author found returning all books",<br>
+                    "books": [
+                    {
+                    "author": "Hans Christian Andersen",<br>
+                    "country": "Denmark",<br>
+                    "language": "Danish",<br>
+                    "link": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\n",<br>
+                    "pages": 784,<br>
+                    "title": "Fairy tales",<br>
+                    "year": 1836,<br>
+                    "genres": [<br>
+                    "Fairy Tales",<br>
+                    "Children's Literature"<br>
+                    ]<br>
+                    }<br>
+                    ]<br>
+                    }<br>
+            </section>
+
+            <h2>Get Language</h2>
+            <button type="button" class="collapsible">Get Language Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getLanguage</p>
+                <p><b>Supported Methods:</b> GET and HEAD</p>
+                <h4>Query Parameters:</h4>
+                <p>Language: The language the books are originally written in. <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON object containing a response message and an array
+                    of JSON objects containing data for all the books with the same language.</p>
+                <h4>Example:</h4>
+                <p>URL: /getLanguage?language=Chinese</p>
+                <p>Returns:
+                    {<br>
+                    "message": "Language found returning all books",<br>
+                    "books": [<br>
+                    {<br>
+                    "author": "Lu Xun",<br>
+                    "country": "China",<br>
+                    "language": "Chinese",<br>
+                    "link": "https://en.wikipedia.org/wiki/A_Madman%27s_Diary\n",<br>
+                    "pages": 389,<br>
+                    "title": "Diary of a Madman",<br>
+                    "year": 1918<br>
+                    }<br>
+                    ]<br>
+                    }<br>
+            </section>
+
+            <h2>Get Year</h2>
+            <button type="button" class="collapsible">Get Year Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getYear</p>
+                <p><b>Supported Methods:</b> GET and HEAD</p>
+                <h4>Query Parameters:</h4>
+                <p>Year: The year the books were published <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON object containing a response message and an array
+                    of JSON objects containing data for all the books published in the same year.</p>
+                <h4>Example:</h4>
+                <p>URL: /getYear?year=1958</p>
+                <p>Returns:
+                    {<br>
+                    "message": "Year found returning all books",<br>
+                    "books": [<br>
+                    {<br>
+                    "author": "Chinua Achebe",<br>
+                    "country": "Nigeria",<br>
+                    "language": "English",<br>
+                    "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",<br>
+                    "pages": 209,<br>
+                    "title": "Things Fall Apart",<br>
+                    "year": 1958,<br>
+                    "genres": [<br>
+                    "Historical Fiction",<br>
+                    "Postcolonial Literature"<br>
+                    ]<br>
+                    }<br>
+                    ]<br>
+                    }<br>
+            </section>
+
+            <h2>Add Book</h2>
+            <button type="button" class="collapsible">Add Book Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getYear</p>
+                <p><b>Supported Methods:</b>POST</p>
+                <h4>Body Parameters:</h4>
+                <p>Title: The title of the book. <b>Required</b></p>
+                <p>Author: The author of the book. <b>Required</b></p>
+                <p>Language: The language the book is written in. <b>Required</b></p>
+                <p>Year: The year the book was published. <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON object representing the new book added to the database</p>
+                <h4>Example:</h4>
+                <p>URL: /addBook</p>
+                <p>Body: {title: 'v', author: 'Ben Kingsley', language: 'English', year: '2026'}</p>
+                <p>Returns: 
+                    {"author":"Ben Kingsley","language":"English","title":"v","year":2026}
+                </p>
+            </section>
+
+            <h2>Review Book</h2>
+            <button type="button" class="collapsible">Review Book Info</button>
+            <section class="content">
+                <p><b>Relative URL:</b> /getYear</p>
+                <p><b>Supported Methods:</b>POST</p>
+                <h4>Body Parameters:</h4>
+                <p>Title: The title of the book. <b>Required</b></p>
+                <p>Score: The new review score <b>Required</b></p>
+                <h4>Returns:</h4>
+                <p>A JSON object representing the new book added to the database</p>
+                <h4>Example:</h4>
+                <p>URL: /reviewBook</p>
+                <p>Body: {title: 'v', score: '5'}</p>
+                <p>Returns: No Content</p>
+            </section>
+        </section>
+</body>
+
+</html>

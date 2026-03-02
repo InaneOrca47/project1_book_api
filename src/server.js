@@ -43,6 +43,9 @@ const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/addBook') {
     parseBody(request, response, jsonHandler.addBook);
   }
+  else if (parsedUrl.pathname === '/reviewBook') {
+    parseBody(request, response, jsonHandler.reviewBook);
+  }
 };
 
 const handleGet = (request, response, parsedUrl) => {
@@ -53,14 +56,23 @@ const handleGet = (request, response, parsedUrl) => {
     case '/':
       htmlHandler.getIndex(request, response);
       break;
+    case '/docs':
+      htmlHandler.getDocs(request, response);
+      break;
     case '/getBook':
       jsonHandler.getBooks(request, response);
       break;
-    case 'getAuthor':
+    case '/getAuthor':
+      jsonHandler.getAuthor(request, response);
       break;
-    case 'getLanguage':
+    case '/getLanguage':
+      jsonHandler.getLanguage(request, response);
+      break;
+    case '/getYear':
+      jsonHandler.getYear(request, response);
       break;
     default:
+      jsonHandler.notFound(request, response);
       break;
   }
 };

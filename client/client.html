@@ -35,12 +35,21 @@
         if (obj.message) {
           content.innerHTML += `<p>Message: ${obj.message}</p>`;
         } else {
-          content.innerHTML += `<p>${JSON.stringify(obj)}}</p>`;
+          content.innerHTML += `<a href=${obj.books[0].link}>Book Article</a>`;
+        }
+        if (obj.books) {
+          content.innerHTML += `<p>${JSON.stringify(obj.books[0])}...</p>`;
         }
       }
 
       if (method === 'post') {
         //Magic words
+        const obj = await response.json();
+        if (obj.message) {
+          content.innerHTML += `<p>Message: ${obj.message}</p>`;
+        } else {
+          content.innerHTML += `<p>${obj.title} by ${obj.author}</p>`;
+        }
 
       }
     };
@@ -49,12 +58,24 @@
       const bookAction = bookForm.getAttribute('action');//addUser
       const bookMethod = bookForm.getAttribute('method');//POST
 
-      const title = bookForm.querySelector('#titlePost').value;
-      const author = bookForm.querySelector('#authorPost').value;
-      const language = bookForm.querySelector('#languagePost').value;
-      const year = bookForm.querySelector('#yearPost').value;
+      let title;
+      let formData;
 
-      const formData = JSON.stringify({ title, author, language, year });
+      if (bookAction === '/addBook') {
+        title = bookForm.querySelector('#titlePost').value;
+        const author = bookForm.querySelector('#authorPost').value;
+        const language = bookForm.querySelector('#languagePost').value;
+        const year = bookForm.querySelector('#yearPost').value;
+
+        formData = JSON.stringify({ title, author, language, year });
+      }
+      else {
+        title = bookForm.querySelector('#titlePost').value;
+        const score = bookForm.querySelector('#scorePost').value;
+
+        formData = JSON.stringify({ title, score});
+      }
+
       console.log(formData);
 
       const response = await fetch(bookAction, {
@@ -71,17 +92,33 @@
     };
 
     const sendGet = async (form) => {
-      const methodSelect = document.querySelector('#methodSelect');
+      const methodSelect = form.querySelector('#methodSelect');
       let formData;
+      let title;
+      let author;
+      let language;
+      let year;
 
       switch (form.id) {
         case 'getBook':
-          const title = form.querySelector('#titleField').value;
-          const author = form.querySelector('#authorGet').value;
-          const language = form.querySelector('#languageGet').value;
-          const year = form.querySelector('#yearGet').value;
+          title = form.querySelector('#titleField').value;
+          author = form.querySelector('#authorGet').value;
+          language = form.querySelector('#languageGet').value;
+          year = form.querySelector('#yearGet').value;
 
           formData = `title=${title}&author=${author}&language=${language}&year=${year}`;
+          break;
+        case 'getAuthor':
+          author = form.querySelector('#authorGet').value;
+          formData = `author=${author}`;
+          break;
+        case 'getLanguage':
+          language = form.querySelector('#languageGet').value;
+          formData = `language=${language}`;
+          break;
+        case 'getYear':
+          year = form.querySelector('#yearGet').value;
+          formData = `year=${year}`;
           break;
 
       }
@@ -90,6 +127,7 @@
       const response = await fetch(`${form.action}?${formData}`, {
         method: methodSelect.value,
         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json'
         }
       });
@@ -104,6 +142,7 @@
       const languageForm = document.querySelector('#getLanguage');
       const yearForm = document.querySelector('#getYear');
       const addBookForm = document.querySelector('#addBookForm');
+      const reviewBookForm = document.querySelector('#reviewBookForm');
 
       // write their functions
       const getBooks = (e) => {
@@ -136,12 +175,19 @@
         return false;
       }
 
+      const reviewBook = (e) => {
+        e.preventDefault();
+        sendPost(reviewBookForm);
+        return false;
+      }
+
       // hook up events
       bookForm.addEventListener('submit', getBooks);
       authorForm.addEventListener('submit', getAuthor);
       languageForm.addEventListener('submit', getLanguage);
       yearForm.addEventListener('submit', getYear);
       addBookForm.addEventListener('submit', addBook);
+      reviewBookForm.addEventListener('submit', reviewBook);
     };
 
     window.onload = init;
@@ -151,7 +197,8 @@
 
 <body>
   <section id="top">
-    <h3>Books API</h3>
+    <h1>Books API</h1>
+    <a href = '/docs'>See Documentation</a>
 
     <form id="getBook" action="/getBook" method="GET">
       <label for="title">Title: </label>
@@ -161,7 +208,7 @@
       <label for="language">Language: </label>
       <input id="languageGet" type="text" name="language" />
       <label for="year">Year: </label>
-      <input id="yearGet" type="num" name="year" min=0 max=2026 />
+      <input id="yearGet" type="num" name="year" min=-2000 max=2026 />
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
@@ -190,13 +237,13 @@
     </form> <br>
 
     <form id="getYear" action="/getYear" method="GET">
-      <label for="year">Language: </label>
-      <input id="yearGet" type="num" name="year" min=0 max=2026 />
+      <label for="year">Year: </label>
+      <input id="yearGet" type="num" name="year" min=-2000 max=2026 />
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <input type="submit" value="Get Language" />
+      <input type="submit" value="Get Year" />
     </form> <br>
 
     <form id="addBookForm" action="/addBook" method="POST">
@@ -207,8 +254,16 @@
       <label for="language">Language: </label>
       <input id="languagePost" type="text" name="language" />
       <label for="year">Year: </label>
-      <input id="yearPost" type="num" name="year" min=0 max=2026 />
+      <input id="yearPost" type="num" name="year" min=-2000 max=2026 />
       <input type="submit" value="Add Book" />
+    </form>
+
+    <form id="reviewBookForm" action="/reviewBook" method="POST">
+      <label for="Title">Title: </label>
+      <input id="titlePost" type="text" name="title" />
+      <label for="score">Score: </label>
+      <input id="scorePost" type="num" name="score" min=0 max=5 />/5
+      <input type="submit" value="Submit Review" />
     </form>
   </section>
   <section id="content">
